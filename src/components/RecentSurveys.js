@@ -20,7 +20,7 @@ class RecentSurveys extends Component {
           <List>
             {
               recentSurveys.map((survey, i) => (
-                <ListItem onPress={() => this.props.navigation.navigate('Survey', {survey:survey})}>
+                <ListItem onPress={() => this.props.navigation.navigate('Survey')}>
                   <Text> {survey.surveyName} </Text>
                 </ListItem>
               ))
@@ -35,6 +35,6 @@ class RecentSurveys extends Component {
   }
 }
 
-const mapStateToProps = state => ({ recentSurveys: state.survey.recentSurveys});
+const mapStateToProps = state => ({ recentSurveys: state.app.recentSurveys});
 
 export default connect(mapStateToProps)(RecentSurveys);

@@ -1,10 +1,23 @@
 import { NetInfo } from 'react-native';
 
-export const addToRecentSurvey = (survey) => {
-  return (dispatch ) => {
-    dispatch({ type: 'ADD_TO_RECENT_SURVEY', survey});
-  };
-};
+export const findSurvey = (surveyId) => {
+  return (dispatch) => {
+      return fetch('https://stormy-forest-11115.herokuapp.com/api/survey/surveyId/'+surveyId)
+      .then((res)=>res.json())
+      .then((survey) => {
+        if(survey.id == -1)
+          return {code: 404, err:'Not Found'}
+        else{
+          dispatch({ type: 'SET_SURVEY', survey});
+          dispatch({ type: 'ADD_TO_RECENT_SURVEY', survey});
+          return {code: 200}
+        }
+      })
+      .catch((err) => {
+        return {code:500, err: 'Server Error'}
+      })
+  }
+}
 
 export const connectionState = ({ status }) => {
   return { type: 'CHANGE_CONNECTION_STATUS', isConnected: status };
@@ -23,7 +36,6 @@ export const submitSavedAnswer = ({answer}) => {
     for(let key in answer) formData += key+'='+answer[key]+'&';
     formData = formData.slice(0,-1);
 
-    console.log(formData);
     return fetch('https://stormy-forest-11115.herokuapp.com/api/answer/create', {
       method: 'POST',
       headers: {
@@ -33,7 +45,6 @@ export const submitSavedAnswer = ({answer}) => {
     })
     .then((res) => res.json())
     .then((res) => {
-      console.log('dito pows');
       dispatch({ type: 'REMOVE_FROM_ACTION_QUEUE', answer });
     });
   }
@@ -41,7 +52,7 @@ export const submitSavedAnswer = ({answer}) => {
 
 export const submitAnswer = ( answer ) => {
   return (dispatch, getState) => {
-    const isConnected  = getState().survey.isConnected;
+    const isConnected  = getState().app.isConnected;
     if (isConnected) {
       let formData = '';
 

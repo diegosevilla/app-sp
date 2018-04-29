@@ -1,11 +1,10 @@
 import _ from 'lodash';
 
 const initialState = {
-  personIndex: 1,
-  people: [],
   actionQueue: [],
   isConnected: false,
   recentSurveys: [],
+  survey: {}
 };
 
 const SurveyReducer = (state = initialState, action) => {
@@ -17,6 +16,11 @@ const SurveyReducer = (state = initialState, action) => {
     case 'REMOVE_FROM_ACTION_QUEUE':
       return Object.assign({}, state, {
         actionQueue: _.without(state.actionQueue, action.answer),
+      });
+    case 'SET_SURVEY':
+      console.log('setting survey ' + action.survey.id);
+      return Object.assign({}, state, {
+        survey: action.survey
       });
     case 'ADD_TO_RECENT_SURVEY':
       return Object.assign({}, state, {

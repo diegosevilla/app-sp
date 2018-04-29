@@ -17,28 +17,14 @@ class Survey extends React.Component {
   }
 
   _handleConnectionChange = (isConnected) => {
-    Toast.show({
-      text: isConnected? 'Device is now online' : 'Device is now offline',
-      buttonText: "Okay",
-      type: isConnected? "success": "danger",
-      duration: 3000
-    })
     const { dispatch, actionQueue } = this.props;
     dispatch(connectionState({ status: isConnected }));
     if (isConnected && actionQueue.length > 0) {
       actionQueue.forEach((answer) => {
-        console.log(JSON.stringify(answer));
         this.props.dispatch(submitSavedAnswer({answer}))
       });
     }
-
   };
-
-  componentWillMount(){
-    const { params } = this.props.navigation.state;
-    const survey = params ? params.survey : null;
-    this.state = {survey: survey};
-  }
 
   process(q){
     q.forEach((question) => {
@@ -53,7 +39,8 @@ class Survey extends React.Component {
   }
 
   render() {
-    const survey = this.state.survey;
+    const survey = this.props.survey;
+    console.log(JSON.stringify(survey));
     let q = [];
     survey.questions.forEach((question) => {
       switch(question.questionType){
@@ -98,8 +85,9 @@ class Survey extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    isConnected: state.survey.isConnected,
-    actionQueue: state.survey.actionQueue
+    isConnected: state.app.isConnected,
+    actionQueue: state.app.actionQueue,
+    survey: state.app.survey
   };
 };
 

@@ -4,7 +4,7 @@ import SurveyReducer from './SurveyReducer';
 
 const AppReducer = combineReducers({
   nav: NavReducer,
-  survey: SurveyReducer
+  app: SurveyReducer
 });
 
 export default AppReducer;
