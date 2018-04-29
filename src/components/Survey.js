@@ -1,11 +1,11 @@
 import React from 'react';
 import { NetInfo } from 'react-native';
 import { connect } from 'react-redux';
-import { Container, Header, Content, Form, Item, Input, H2, Row, Fab, Icon} from 'native-base';
+import { Container, Toast, Content, Form, Item, Input, H2, Text, Row, Fab, Icon} from 'native-base';
 import { Divider} from 'react-native-elements';
 import { OptionsQuestion, TextQuestion, NumbersQuestion, CheckBoxQuestion } from './Questions';
 
-import {connectionState} from '../actions/netActions';
+import { connectionState, addToActionQueue, submitAnswer, submitSavedAnswer } from '../actions/netActions';
 
 class Survey extends React.Component {
   componentDidMount() {
@@ -17,7 +17,21 @@ class Survey extends React.Component {
   }
 
   _handleConnectionChange = (isConnected) => {
-    this.props.dispatch(connectionState({ status: isConnected }));
+    Toast.show({
+      text: isConnected? 'Device is now online' : 'Device is now offline',
+      buttonText: "Okay",
+      type: isConnected? "success": "danger",
+      duration: 3000
+    })
+    const { dispatch, actionQueue } = this.props;
+    dispatch(connectionState({ status: isConnected }));
+    if (isConnected && actionQueue.length > 0) {
+      actionQueue.forEach((answer) => {
+        console.log(JSON.stringify(answer));
+        this.props.dispatch(submitSavedAnswer({answer}))
+      });
+    }
+
   };
 
   componentWillMount(){
@@ -27,16 +41,15 @@ class Survey extends React.Component {
   }
 
   process(q){
-    let answers = [];
     q.forEach((question) => {
       let id = question.props.id;
-      let temp = {
-        id: id,
-        answer: this.refs[id].getVal()
+      let answer = {
+        questionId: id,
+        response: this.refs[id].getVal()
       };
-      console.log(JSON.stringify(temp));
-      answers.push(temp);
+      this.props.dispatch(submitAnswer(answer));
     });
+    alert(this.props.isConnected? 'Answers submitted.' : 'Device is offline. Answers will be saved.')
   }
 
   render() {
@@ -61,8 +74,14 @@ class Survey extends React.Component {
     return(
       <Container>
         <Content>
-          <Row style={{align: 'center'}}>
-          <H2> {survey.surveyName} </H2>
+          <Row style={{textAlign: 'center'}}>
+            <H2> {survey.surveyName} </H2>
+          </Row>
+          <Row style={{textAlign: 'center'}}>
+            <Text style={{fontSize: 16}}> {survey.author} </Text>
+          </Row>
+          <Row style={{textAlign: 'center'}}>
+            <Text style={{fontSize: 14}}> {survey.details} </Text>
           </Row>
           <Divider style={{ backgroundColor: 'blue' }} />
           <Form>
@@ -79,7 +98,8 @@ class Survey extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    isConnected: state.isConnected,
+    isConnected: state.survey.isConnected,
+    actionQueue: state.survey.actionQueue
   };
 };
 

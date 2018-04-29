@@ -67,6 +67,7 @@ export class OptionsQuestion extends React.Component {
           mode="dropdown"
           selectedValue={this.state.selected}
           onValueChange={this.onValueChange.bind(this)}
+          style={{width: '100%'}}
         >
         {items}
         </Picker>
@@ -101,7 +102,7 @@ export class NumbersQuestion extends React.Component {
       <Content style={{borderColor: 'black', borderWidth: 1, margin: 1}}>
         <Text> {question.label} </Text>
         <Slider onValueChange={(val)=>this.changeVal(val)} minimumValue={question.minVal} maximumValue={question.maxVal} step={question.step}/>
-        <Text> {this.state.value} </Text>
+        <Text style={{textAlign: 'center'}}> {this.state.value} </Text>
       </Content>
     )
   }
@@ -126,7 +127,7 @@ export class CheckBoxQuestion extends React.Component {
 
   getIndex(val){
     let index;
-    for(index = 0 ; index < this.state.checked.length ; i++){
+    for(index = 0 ; index < this.state.checked.length ; index++){
       if(this.state.checked[index] == val)
         break;
     }
@@ -151,8 +152,8 @@ export class CheckBoxQuestion extends React.Component {
     let items = [];
     question.options.forEach((o) => {
       items.push(
-        <ListItem>
-          <CheckBox onPress={() => this.changeVal(o)} checked={this.check(o)} color="green"/>
+        <ListItem onPress={() => this.changeVal(o)}>
+          <CheckBox onPress={() => this.changeVal(o)} checked={this.check(o)} color="green"checked={this.check(o)} color="green"/>
           <Body>
             <Text> {o} </Text>
           </Body>

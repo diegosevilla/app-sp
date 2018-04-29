@@ -29,7 +29,7 @@ class FindSurvey extends Component {
       })
       return;
     }
-    this.setState(previousState => { return { surveyId: '', isLoading: true, cancel: false} });
+    this.setState({ surveyId: '', isLoading: true, cancel: false});
     fetch('https://stormy-forest-11115.herokuapp.com/api/survey/'+id)
     .then((res) => {
       if(res.status != 200)

@@ -10,21 +10,13 @@ const initialState = {
 
 const SurveyReducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'INC_PERSON_INDEX':
-      return Object.assign({}, state, {
-        personIndex: state.personIndex + 1,
-      });
-    case 'SAVE_PERSON':
-      return Object.assign({}, state, {
-        people: [action.person].concat(state.people),
-      });
     case 'ADD_TO_ACTION_QUEUE':
       return Object.assign({}, state, {
-        actionQueue: state.actionQueue.concat([action.payload]),
+        actionQueue: state.actionQueue.concat([action.answer]),
       });
     case 'REMOVE_FROM_ACTION_QUEUE':
       return Object.assign({}, state, {
-        actionQueue: _.without(state.actionQueue, action.payload),
+        actionQueue: _.without(state.actionQueue, action.answer),
       });
     case 'ADD_TO_RECENT_SURVEY':
       return Object.assign({}, state, {
