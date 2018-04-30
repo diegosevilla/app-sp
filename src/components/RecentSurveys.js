@@ -14,6 +14,18 @@ class RecentSurveys extends Component {
 
   render() {
     const { recentSurveys } = this.props;
+    if(recentSurveys.length == 0){
+      return(
+        <Container>
+          <Content>
+            <Text style={{fontSize: 24, textAlign: 'center'}}> No Recent Surveys Yet. </Text>
+          </Content>
+          <Fab direction="up" style={{ backgroundColor: '#e8542c' }} position="bottomRight" onPress={() => this.cancel()}>
+            <Icon name="md-arrow-round-back" />
+          </Fab>
+        </Container>
+      )
+    } else
     return (
       <Container>
         <Content>

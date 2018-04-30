@@ -18,7 +18,6 @@ const SurveyReducer = (state = initialState, action) => {
         actionQueue: _.without(state.actionQueue, action.answer),
       });
     case 'SET_SURVEY':
-      console.log('setting survey ' + action.survey.id);
       return Object.assign({}, state, {
         survey: action.survey
       });

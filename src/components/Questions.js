@@ -11,7 +11,7 @@ export class TextQuestion extends React.Component {
   }
 
   getVal(){
-    return this.state.value;
+    return [this.state.value];
   }
 
   render() {
@@ -49,7 +49,7 @@ export class OptionsQuestion extends React.Component {
   }
 
   getVal(){
-    return this.state.selected;
+    return [this.state.selected];
   }
 
   render() {
@@ -93,7 +93,7 @@ export class NumbersQuestion extends React.Component {
   }
 
   getVal(){
-    return this.state.value;
+    return [this.state.value];
   }
 
   render() {

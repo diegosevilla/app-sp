@@ -1,11 +1,11 @@
 import React from 'react';
 import { NetInfo } from 'react-native';
 import { connect } from 'react-redux';
-import { Container, Toast, Content, Form, Item, Input, H2, Text, Row, Fab, Icon} from 'native-base';
+import { Container, Header, Toast, Content, Form, Item, Input, H2, Text, Row, Fab, Icon} from 'native-base';
 import { Divider} from 'react-native-elements';
 import { OptionsQuestion, TextQuestion, NumbersQuestion, CheckBoxQuestion } from './Questions';
 
-import { connectionState, addToActionQueue, submitAnswer, submitSavedAnswer } from '../actions/netActions';
+import { connectionState, submitAnswer, submitSavedAnswer } from '../actions/appActions';
 
 class Survey extends React.Component {
   componentDidMount() {
@@ -19,28 +19,43 @@ class Survey extends React.Component {
   _handleConnectionChange = (isConnected) => {
     const { dispatch, actionQueue } = this.props;
     dispatch(connectionState({ status: isConnected }));
-    if (isConnected && actionQueue.length > 0) {
-      actionQueue.forEach((answer) => {
-        this.props.dispatch(submitSavedAnswer({answer}))
-      });
+    if(isConnected){
+      if (actionQueue.length > 0) {
+        Toast.show({text: 'Device is now online. Saved answers will be submitted.', buttonText: "Okay", duration: 3000, type: 'success' })
+        actionQueue.forEach((action) => {
+          alert(action);
+          this.props.dispatch(submitSavedAnswer({action}))
+        });
+      }
+    } else {
+      Toast.show({text: 'Device is offline. Answers will be saved.', buttonText: "Okay", duration: 3000, type: 'danger'});
     }
   };
 
   process(q){
+    let answers = [];
     q.forEach((question) => {
       let id = question.props.id;
-      let answer = {
-        questionId: id,
-        response: this.refs[id].getVal()
-      };
-      this.props.dispatch(submitAnswer(answer));
+      let values = this.refs[id].getVal();
+      values.forEach((response) => {
+        let answer = {
+          questionId: id,
+          response: response
+        };
+        answers.push(answer);
+      })
     });
-    alert(this.props.isConnected? 'Answers submitted.' : 'Device is offline. Answers will be saved.')
+    this.props.dispatch(submitAnswer(answers));
+    Toast.show({
+      text: this.props.isConnected? 'Answers submitted'  : 'Answers saved.',
+      buttonText: "Okay",
+      duration: 3000,
+      type:this.props.isConnected? 'success' : 'danger'
+    })
   }
 
   render() {
     const survey = this.props.survey;
-    console.log(JSON.stringify(survey));
     let q = [];
     survey.questions.forEach((question) => {
       switch(question.questionType){
@@ -61,16 +76,16 @@ class Survey extends React.Component {
     return(
       <Container>
         <Content>
-          <Row style={{textAlign: 'center'}}>
-            <H2> {survey.surveyName} </H2>
+          <Row style={{width: '100%'}}>
+            <H2 style={{ textAlign: 'center'}} > {survey.surveyName} </H2>
           </Row>
-          <Row style={{textAlign: 'center'}}>
-            <Text style={{fontSize: 16}}> {survey.author} </Text>
+          <Row>
+            <Text style={{ textAlign: 'center', fontSize: 16}}> {survey.author} </Text>
           </Row>
-          <Row style={{textAlign: 'center'}}>
-            <Text style={{fontSize: 14}}> {survey.details} </Text>
+          <Row>
+            <Text style={{textAlign: 'center', fontSize: 14}}> {survey.details} </Text>
           </Row>
-          <Divider style={{ backgroundColor: 'blue' }} />
+          <Divider style={{ margin: 2, backgroundColor: 'blue' }} />
           <Form>
             {q}
           </Form>
