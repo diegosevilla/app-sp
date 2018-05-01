@@ -43,7 +43,6 @@ export const submitSavedAnswer = ({action}) => {
     .then((res) => res.json())
     .then((updatedSurvey) => {
       answers.forEach((answer)=>{
-        console.log(answer);
         answer.responseCount = updatedSurvey.responseCount;
         let formData = '';
 

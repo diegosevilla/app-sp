@@ -23,7 +23,6 @@ class Survey extends React.Component {
       if (actionQueue.length > 0) {
         Toast.show({text: 'Device is now online. Saved answers will be submitted.', buttonText: "Okay", duration: 3000, type: 'success' })
         actionQueue.forEach((action) => {
-          alert(action);
           this.props.dispatch(submitSavedAnswer({action}))
         });
       }
@@ -33,6 +32,7 @@ class Survey extends React.Component {
   };
 
   process(q){
+    alert('Processing Answers');
     let answers = [];
     q.forEach((question) => {
       let id = question.props.id;
@@ -45,13 +45,24 @@ class Survey extends React.Component {
         answers.push(answer);
       })
     });
-    this.props.dispatch(submitAnswer(answers));
-    Toast.show({
-      text: this.props.isConnected? 'Answers submitted'  : 'Answers saved.',
-      buttonText: "Okay",
-      duration: 3000,
-      type:this.props.isConnected? 'success' : 'danger'
-    })
+    if(this.props.isConnected){
+      this.props.dispatch(submitAnswer(answers)).then((res) => {
+        Toast.show({
+          text: 'Answers submitted',
+          buttonText: "Okay",
+          duration: 3000,
+          type: 'success'
+        })
+      })
+    } else {
+      this.props.dispatch(submitAnswer(answers));
+      Toast.show({
+        text: 'Answers saved',
+        buttonText: "Okay",
+        duration: 3000,
+        type: 'success'
+      })
+    }
   }
 
   render() {
@@ -76,7 +87,7 @@ class Survey extends React.Component {
     return(
       <Container>
         <Content>
-          <Row style={{width: '100%'}}>
+          <Row style={{width: '100%', padding: 0}}>
             <H2 style={{ textAlign: 'center'}} > {survey.surveyName} </H2>
           </Row>
           <Row>

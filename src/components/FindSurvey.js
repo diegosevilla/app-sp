@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Container, Header, List, ListItem, Tab, Tabs, Footer, Content, Button, Icon, Text, Row, Form, Label, Input, Item, Fab, Spinner, Toast} from 'native-base';
 import { findSurvey } from '../actions/appActions';
 import _ from 'lodash';
+import ignoreCase from 'ignore-case';
 
 class FindSurvey extends Component {
   static navigationOptions = {
@@ -100,7 +101,7 @@ class FindSurvey extends Component {
   render() {
     const initialSurveys = _.sortBy(this.state.surveys, [function(s) { return s.id; }]);
     const surveyName = this.state.surveyName;
-    const surveys = initialSurveys != -1? _.filter(initialSurveys, function(s){return s.surveyName.includes(surveyName)}) : [];
+    const surveys = initialSurveys != -1? _.filter(initialSurveys, function(s){return ignoreCase.includes(s.surveyName, surveyName)}) : [];
     const listOfSurveys = [];
 
     surveys.forEach((survey)=>{
