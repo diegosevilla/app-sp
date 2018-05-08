@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 const initialState = {
   actionQueue: [],
+
   isConnected: false,
   recentSurveys: [],
   survey: {}

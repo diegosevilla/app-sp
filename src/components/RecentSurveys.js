@@ -2,11 +2,29 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Container, Content, List, ListItem, Text, Fab, Icon } from 'native-base';
+import {setSurvey} from '../actions/appActions';
 
 class RecentSurveys extends Component {
   static navigationOptions = {
     title: 'Recent Surveys',
   };
+
+  goToSurvey(survey){
+    this.setState({isLoading: true})
+    const {dispatch} = this.props;
+    dispatch(setSurvey(survey)).then((res)=>{
+      if(res.code == 200){
+        this.props.navigation.navigate('Survey');
+      }else {
+        Toast.show({
+          text: res.err,
+          buttonText: "Okay",
+          duration: 3000
+        })
+      }
+      this.setState({isLoading: false})
+    })
+  }
 
   cancel(){
     this.props.navigation.goBack();
@@ -32,7 +50,7 @@ class RecentSurveys extends Component {
           <List>
             {
               recentSurveys.map((survey, i) => (
-                <ListItem onPress={() => this.props.navigation.navigate('Survey')}>
+                <ListItem key={survey.id} onPress={() => this.goToSurvey(survey)}>
                   <Text> {survey.surveyName} </Text>
                 </ListItem>
               ))

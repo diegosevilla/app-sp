@@ -10,8 +10,16 @@ export class TextQuestion extends React.Component {
     };
   }
 
+  componentDidMount(){
+    this.setState({value: this.props.question.defaultValue});
+  }
+
   getVal(){
     return [this.state.value];
+  }
+
+  reset(){
+    this.setState({value: this.props.question.defaultValue})
   }
 
   render() {
@@ -21,7 +29,7 @@ export class TextQuestion extends React.Component {
       <View style={{borderColor: 'black', borderWidth: 1, margin: 1}}>
         <Item floatingLabel>
           <Label> {question.label} </Label>
-          <Input value={question.defaultVal} onChangeText={(val)=> {this.setState({ value: val })}}/>
+          <Input value={this.state.value} onChangeText={(val)=> {this.setState({ value: val })}}/>
         </Item>
       </View>
     )
@@ -52,11 +60,17 @@ export class OptionsQuestion extends React.Component {
     return [this.state.selected];
   }
 
+  reset(){
+    this.setState({
+      selected: this.props.question.options[0]
+    });
+  }
+
   render() {
     const question =  this.props.question;
     const items = [];
     question.options.forEach((o) =>{
-      items.push(<Picker.Item label={o} value={o}/>);
+      items.push(<Picker.Item key={question.id+'-'+o} label={o} value={o}/>);
     });
 
     return (
@@ -96,12 +110,16 @@ export class NumbersQuestion extends React.Component {
     return [this.state.value];
   }
 
+  reset(){
+    this.setState({value: this.props.question.minVal});
+  }
+
   render() {
     let question = this.props.question;
     return (
       <Content style={{borderColor: 'black', borderWidth: 1, margin: 1}}>
         <Text> {question.label} </Text>
-        <Slider onValueChange={(val)=>this.changeVal(val)} minimumValue={question.minVal} maximumValue={question.maxVal} step={question.step}/>
+        <Slider value={this.state.value} onValueChange={(val)=>this.changeVal(val)} minimumValue={question.minVal} maximumValue={question.maxVal} step={question.step}/>
         <Text style={{textAlign: 'center'}}> {this.state.value} </Text>
       </Content>
     )
@@ -134,6 +152,10 @@ export class CheckBoxQuestion extends React.Component {
     return index;
   }
 
+  reset(){
+    this.setState({checked: []})
+  }
+
   getVal(){
     return this.state.checked;
   }
@@ -152,7 +174,7 @@ export class CheckBoxQuestion extends React.Component {
     let items = [];
     question.options.forEach((o) => {
       items.push(
-        <ListItem onPress={() => this.changeVal(o)}>
+        <ListItem key={question.id + '-' + o} onPress={() => this.changeVal(o)}>
           <CheckBox onPress={() => this.changeVal(o)} checked={this.check(o)} color="green"checked={this.check(o)} color="green"/>
           <Body>
             <Text> {o} </Text>

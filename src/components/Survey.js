@@ -1,35 +1,12 @@
 import React from 'react';
-import { NetInfo } from 'react-native';
 import { connect } from 'react-redux';
 import { Container, Header, Toast, Content, Form, Item, Input, H2, Text, Row, Fab, Icon} from 'native-base';
 import { Divider} from 'react-native-elements';
 import { OptionsQuestion, TextQuestion, NumbersQuestion, CheckBoxQuestion } from './Questions';
 
-import { connectionState, submitAnswer, submitSavedAnswer } from '../actions/appActions';
+import {submitAnswer, submitSavedAnswer } from '../actions/appActions';
 
 class Survey extends React.Component {
-  componentDidMount() {
-    NetInfo.isConnected.addEventListener('connectionChange', this._handleConnectionChange);
-  }
-
-  componentWillUnmount() {
-    NetInfo.isConnected.removeEventListener('connectionChange', this._handleConnectionChange);
-  }
-
-  _handleConnectionChange = (isConnected) => {
-    const { dispatch, actionQueue } = this.props;
-    dispatch(connectionState({ status: isConnected }));
-    if(isConnected){
-      if (actionQueue.length > 0) {
-        Toast.show({text: 'Device is now online. Saved answers will be submitted.', buttonText: "Okay", duration: 3000, type: 'success' })
-        actionQueue.forEach((action) => {
-          this.props.dispatch(submitSavedAnswer({action}))
-        });
-      }
-    } else {
-      Toast.show({text: 'Device is offline. Answers will be saved.', buttonText: "Okay", duration: 3000, type: 'danger'});
-    }
-  };
 
   process(q){
     alert('Processing Answers');
@@ -37,6 +14,7 @@ class Survey extends React.Component {
     q.forEach((question) => {
       let id = question.props.id;
       let values = this.refs[id].getVal();
+      this.refs[id].reset();
       values.forEach((response) => {
         let answer = {
           questionId: id,
@@ -71,16 +49,16 @@ class Survey extends React.Component {
     survey.questions.forEach((question) => {
       switch(question.questionType){
         case 'Options':
-          q.push(<OptionsQuestion id={question.id} ref={question.id} question={question}/>);
+          q.push(<OptionsQuestion key={question.id} id={question.id} ref={question.id} question={question}/>);
           break;
         case 'Text':
-          q.push(<TextQuestion id={question.id} ref={question.id} question={question}/>);
+          q.push(<TextQuestion key={question.id} id={question.id} ref={question.id} question={question}/>);
           break;
         case 'Number':
-          q.push(<NumbersQuestion id={question.id} ref={question.id} question={question}/>);
+          q.push(<NumbersQuestion key={question.id} id={question.id} ref={question.id} question={question}/>);
           break;
         default:
-          q.push(<CheckBoxQuestion id={question.id} ref={question.id} question={question}/>);
+          q.push(<CheckBoxQuestion key={question.id} id={question.id} ref={question.id} question={question}/>);
       }
     });
 

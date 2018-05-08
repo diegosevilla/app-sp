@@ -4,7 +4,7 @@ import _ from 'lodash';
 export const findSurvey = (surveyId) => {
   return (dispatch, getState) => {
     const recentSurveys  = getState().app.recentSurveys;
-    return fetch('https://josevilla-sp.herokuapp.com/api/survey/surveyId/'+surveyId)
+    return fetch('https://centerpoint-sp.herokuapp.com/api/survey/surveyId/'+surveyId)
     .then((res)=>res.json())
     .then((survey) => {
       if(survey.id == -1)
@@ -20,7 +20,14 @@ export const findSurvey = (surveyId) => {
       return {code:500, err: 'Server Error'}
     })
   }
-}
+};
+
+export const setSurvey = (survey) => {
+  return (dispatch) => {
+    dispatch({ type: 'SET_SURVEY', survey});
+    return {code:200}
+  }
+};
 
 export const connectionState = ({ status }) => {
   return { type: 'CHANGE_CONNECTION_STATUS', isConnected: status };
@@ -37,7 +44,7 @@ export const submitSavedAnswer = ({action}) => {
   let answers = temp.answers;
   let id = temp.surveyId;
   return (dispatch) => {
-    return fetch('https://josevilla-sp.herokuapp.com/api/survey/increment/'+id, {
+    return fetch('https://centerpoint-sp.herokuapp.com/api/survey/increment/'+id, {
       method: 'POST'
     })
     .then((res) => res.json())
@@ -49,7 +56,7 @@ export const submitSavedAnswer = ({action}) => {
         for(let key in answer) formData += key+'='+answer[key]+'&';
         formData = formData.slice(0,-1);
 
-        fetch('https://josevilla-sp.herokuapp.com/api/answer/create', {
+        fetch('https://centerpoint-sp.herokuapp.com/api/answer/create', {
           method: 'POST',
           headers: {
             "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
@@ -67,7 +74,7 @@ export const submitAnswer = ( answers ) => {
     const isConnected  = getState().app.isConnected;
     const survey = getState().app.survey;
     if (isConnected) {
-      return fetch('https://josevilla-sp.herokuapp.com/api/survey/increment/'+survey.id, {
+      return fetch('https://centerpoint-sp.herokuapp.com/api/survey/increment/'+survey.id, {
         method: 'POST'
       })
       .then((res) => res.json())
@@ -80,7 +87,7 @@ export const submitAnswer = ( answers ) => {
           for(let key in answer) formData += key+'='+answer[key]+'&';
           formData = formData.slice(0,-1);
 
-          fetch('https://josevilla-sp.herokuapp.com/api/answer/create', {
+          fetch('https://centerpoint-sp.herokuapp.com/api/answer/create', {
             method: 'POST',
             headers: {
               "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"

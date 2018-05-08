@@ -11,7 +11,8 @@ class FindSurvey extends Component {
     title: 'Find Survey',
   };
 
-  componentWillMount(){
+  constructor(props){
+    super(props);
     this.state = {
       surveyId: '',
       isLoading: false,
@@ -20,7 +21,9 @@ class FindSurvey extends Component {
       surveys: []
     }
 
-    fetch('https://josevilla-sp.herokuapp.com/api/survey/')
+  }
+  componentWillMount(){
+    fetch('https://centerpoint-sp.herokuapp.com/api/survey/')
     .then((res)=>res.json())
     .then((surveys) => {
       this.setState({surveys: surveys})
@@ -106,7 +109,7 @@ class FindSurvey extends Component {
 
     surveys.forEach((survey)=>{
       listOfSurveys.push(
-        <ListItem onPress={ () => { this.clickListItem(survey.surveyId) } }>
+        <ListItem key={survey.id+' listItem'} onPress={ () => { this.clickListItem(survey.surveyId) } }>
           <Row style={{width: '100%'}}>
             <Text> {survey.surveyName} </Text>
           </Row>
@@ -120,20 +123,20 @@ class FindSurvey extends Component {
     const tab2 = [];
     if(initialSurveys.length == 0){
       tab2.push(
-          <Content>
+          <Content key={'loading'}>
             <Spinner color='#96b2dd'/>
             <Text style={{textAlign: 'center'}}> Fetching surveys </Text>
           </Content>
        );
     } else if(initialSurveys == -1){
       tab2.push(
-        <Content>
+        <Content key={'errorFetch'}>
           <Text style={{textAlign: 'center'}}> Error fetching surveys </Text>
         </Content>
       );
     } else {
       tab2.push(
-        <Content>
+        <Content key={'succeddFetch'}>
           <List>
             {listOfSurveys}
           </List>
